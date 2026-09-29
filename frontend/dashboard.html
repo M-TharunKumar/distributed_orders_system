@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard - Distributed Order Processing System</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- ================= NAVBAR ================= -->
+
+    <div class="navbar">
+
+        <div>
+            <h2>Distributed Order Processing System</h2>
+            <p>
+                Welcome, <strong id="username"></strong>
+            </p>
+        </div>
+
+        <button
+            class="logout-btn"
+            onclick="logout()">
+            Logout
+        </button>
+
+    </div>
+
+
+    <div class="dashboard-container">
+
+
+        <!-- ================= PROCESS ORDER ================= -->
+
+        <section class="order-form-section">
+
+            <h2>Process Order</h2>
+
+            <form id="orderForm">
+
+
+                <div class="form-row">
+
+                    <div>
+
+                        <label for="order_id">
+                            Order ID
+                        </label>
+
+                        <input
+                            type="number"
+                            id="order_id"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div>
+
+                        <label for="customer_id">
+                            Customer ID
+                        </label>
+
+                        <input
+                            type="number"
+                            id="customer_id"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-row">
+
+                    <div>
+
+                        <label for="product_id">
+                            Product ID
+                        </label>
+
+                        <input
+                            type="number"
+                            id="product_id"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div>
+
+                        <label for="quantity">
+                            Quantity
+                        </label>
+
+                        <input
+                            type="number"
+                            id="quantity"
+                            min="1"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-row">
+
+                    <div>
+
+                        <label for="unit_price">
+                            Unit Price
+                        </label>
+
+                        <input
+                            type="number"
+                            id="unit_price"
+                            min="0.01"
+                            step="0.01"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div>
+
+                        <label for="payment_status">
+                            Payment Status
+                        </label>
+
+                        <select id="payment_status">
+
+                            <option value="PAID">
+                                PAID
+                            </option>
+
+                            <option value="PENDING">
+                                PENDING
+                            </option>
+
+                            <option value="FAILED">
+                                FAILED
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-row">
+
+                    <div>
+
+                        <label for="source">
+                            Source
+                        </label>
+
+                        <select id="source">
+
+                            <option value="WEB">
+                                WEB
+                            </option>
+
+                            <option value="MOBILE">
+                                MOBILE
+                            </option>
+
+                            <option value="PARTNER">
+                                PARTNER
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div>
+
+                        <label for="order_time">
+                            Order Time
+                        </label>
+
+                        <input
+                            type="datetime-local"
+                            id="order_time"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="process-btn">
+
+                    Process Order
+
+                </button>
+
+            </form>
+
+
+            <p id="orderMessage"></p>
+
+        </section>
+
+
+        <!-- ================= ORDERS ================= -->
+
+        <section class="panel order-details-section">
+        <h2>Order Details</h2>
+
+        <form id="orderLookupForm" class="orders-toolbar">
+            <div>
+                <label for="lookupOrderId">Order ID</label>
+                <input type="number" id="lookupOrderId" min="1" required>
+            </div>
+            <button type="submit">Get Order</button>
+            <button type="button" id="retryLookupOrder">Retry Order</button>
+        </form>
+        <pre id="orderLookupResult" role="status" aria-live="polite"></pre>
+
+        <form id="orderFilterForm" class="orders-toolbar">
+            <div>
+                <label for="statusFilter">Status</label>
+                <select id="statusFilter">
+                    <option value="">All statuses</option>
+                    <option value="SUCCESS">Success</option>
+                    <option value="FAILED">Failed</option>
+                    <option value="PENDING">Pending</option>
+                    <option value="RETRIED">Retried</option>
+                    <option value="REJECTED">Rejected</option>
+                    <option value="PROCESSING">Processing</option>
+                </select>
+            </div>
+            <div>
+                <label for="sourceFilter">Source</label>
+                <select id="sourceFilter">
+                    <option value="">All sources</option>
+                    <option value="WEB">Web</option>
+                    <option value="MOBILE">Mobile</option>
+                    <option value="PARTNER">Partner</option>
+                </select>
+            </div>
+            <button type="submit">Apply filters</button>
+            <button type="button" id="clearOrderFilters">Clear</button>
+        </form>
+
+        <p id="ordersMessage" role="status" aria-live="polite"></p>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Payment</th>
+                    <th>Status</th>
+                    <th>Retry Count</th>
+                    <th>Source</th>
+                    <th>Order Time</th>
+                    <th>Action</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="ordersTableBody">
+
+            </tbody>
+
+        </table>
+
+        </section>
+
+        <!-- ================= SUMMARY ================= -->
+
+            <section class="panel summary-section">
+                <h2>Processing Summary</h2>
+                <div class="cards">
+                    <div class="card">
+                        <h3>Total Orders</h3>
+                        <p id="totalOrders">0</p>
+                    </div>
+                    <div class="card">
+                        <h3>Latest Order ID</h3>
+                        <p id="latestOrderId">-</p>
+                    </div>
+                    <div class="card">
+                        <h3>Successful</h3>
+                        <p id="successfulOrders">0</p>
+                    </div>
+                    <div class="card">
+                        <h3>Failed</h3>
+                        <p id="failedOrders">0</p>
+                    </div>
+                    <div class="card">
+                        <h3>Pending</h3>
+                        <p id="pendingOrders">0</p>
+                    </div>
+                    <div class="card">
+                        <h3>Retried</h3>
+                        <p id="retriedOrders">0</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= INVENTORY ================= -->
+
+        <section class="panel report-section">
+        <h2>Inventory Report</h2>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Product ID</th>
+                    <th>Product Name</th>
+                    <th>Available Stock</th>
+                    <th>Reserved Stock</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="inventoryTableBody">
+
+            </tbody>
+
+        </table>
+        </section>
+
+
+        <!-- ================= CUSTOMERS ================= -->
+
+        <section class="panel report-section">
+        <h2>Customer Report</h2>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Customer ID</th>
+                    <th>Customer Name</th>
+                    <th>Email</th>
+                    <th>Total Orders</th>
+                    <th>Total Amount</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="customersTableBody">
+
+            </tbody>
+
+        </table>
+        </section>
+
+    </div>
+
+
+    <!-- ================= JAVASCRIPT ================= -->
+
+    <script src="js/dashboard.js"></script>
+    <script src="js/orders.js"></script>
+    <script src="js/reports.js"></script>
+
+</body>
+
+</html>
