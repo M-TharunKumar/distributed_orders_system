@@ -16,7 +16,7 @@ loginForm.addEventListener("submit", async function (event) {
         document.getElementById("username").value.trim();
 
     const password =
-        document.getElementById("password").value;
+        document.getElementById("password").value; 
 
 
     // Clear previous message
@@ -24,7 +24,7 @@ loginForm.addEventListener("submit", async function (event) {
     message.style.color = "blue";
 
 
-    // ========================================
+    // ========================================  
     // VALIDATION
     // ========================================
 

@@ -1,3 +1,4 @@
+#the service folder is used to keep the business logic of your application separate from the API routes.
 from decimal import Decimal
 
 

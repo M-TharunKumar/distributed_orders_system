@@ -1,10 +1,11 @@
+# This file is the database connection and session management file in a FastAPI + SQLAlchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
 from config import DATABASE_URL
 
 
-engine = create_engine(
+engine = create_engine(   # create_engine → creates the database connection/engine. 
     DATABASE_URL,
     echo=True
 )
